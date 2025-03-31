@@ -1,11 +1,11 @@
 package hust.kat.studentadder
 
-import android.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 
 
@@ -49,7 +49,7 @@ class StudentAdapter(
     private class ViewHolder(view: View) {
         val tvName: TextView = view.findViewById(R.id.text1)
         val tvId: TextView = view.findViewById(R.id.text2)
-        val btnDelete: Button = view.findViewById(R.id.delete)
+        val btnDelete: ImageButton = view.findViewById(R.id.delete)
     }
 
 }
