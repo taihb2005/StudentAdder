@@ -48,7 +48,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/studentView"
         android:layout_width="409dp"
         android:layout_height="579dp"
@@ -56,6 +56,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/khoaIdol"
         tools:layout_editor_absoluteY="151dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,18 +3,21 @@ package hust.kat.studentadder
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
     private val studentList: MutableList<StudentModel> by lazy {
         mutableListOf()
     }
+
+    private lateinit var adapter: StudentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,22 +31,25 @@ class MainActivity : AppCompatActivity() {
 
         val editName: EditText = findViewById(R.id.editName)
         val editStudentId: EditText = findViewById(R.id.editStudentId)
-        val adapter = StudentAdapter(studentList)
-        val studentView: ListView = findViewById(R.id.studentView)
-
+        val studentView: RecyclerView = findViewById(R.id.studentView)
         val addButton: Button = findViewById(R.id.addStudent)
-        addButton.setOnClickListener{
+
+        adapter = StudentAdapter(studentList)
+        studentView.adapter = adapter
+        studentView.layoutManager = LinearLayoutManager(this)
+
+        addButton.setOnClickListener {
             val fullName = editName.text.toString()
             val studentId = editStudentId.text.toString()
 
-            if(fullName.isEmpty() || studentId.isEmpty()){
+            if (fullName.isEmpty() || studentId.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ Họ tên và MSSV", Toast.LENGTH_SHORT).show()
             } else {
-                studentList.add(StudentModel(fullName, studentId, Button(this)))
-                adapter.notifyDataSetChanged()
+                studentList.add(StudentModel(fullName, studentId))
+                adapter.notifyItemInserted(studentList.size - 1)
+                editName.text.clear()
+                editStudentId.text.clear()
             }
         }
-
-        studentView.adapter = adapter
     }
 }
