@@ -58,10 +58,10 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/addStudentButton"
+        android:id="@+id/updateStudentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add"
+        android:text="@string/update"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editInfo" />

@@ -1,6 +1,8 @@
 package hust.kat.studentadder
 
+import android.view.ContextMenu
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -11,10 +13,28 @@ class StudentAdapter(
     private val studentList: MutableList<StudentModel>
 ) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
 
-    class StudentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvName: TextView = itemView.findViewById(R.id.text1)
-        val tvId: TextView = itemView.findViewById(R.id.text2)
-        val btnDelete: ImageButton = itemView.findViewById(R.id.delete)
+    var selectedPosition = -1
+
+    inner class StudentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
+        val tvName: TextView = itemView.findViewById(R.id.displayStudentName)
+        val tvId: TextView = itemView.findViewById(R.id.displayStudentId)
+        init {
+            itemView.setOnCreateContextMenuListener(this)
+            itemView.setOnLongClickListener {
+                selectedPosition = adapterPosition
+                false
+            }
+        }
+
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            v: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            val inflater = MenuInflater(v?.context)
+            inflater.inflate(R.menu.context_menu, menu)
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
@@ -25,14 +45,11 @@ class StudentAdapter(
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val student = studentList[position]
-        holder.tvName.text = student.fullName
-        holder.tvId.text = "MSSV: ${student.studentID}"
+        val studentName = "Full name: ${student.fullName}"
+        holder.tvName.text = studentName
 
-        holder.btnDelete.setOnClickListener {
-            studentList.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, studentList.size)
-        }
+        val studentID = "Student ID: ${student.studentID}"
+        holder.tvId.text = studentID
     }
 
     override fun getItemCount(): Int = studentList.size

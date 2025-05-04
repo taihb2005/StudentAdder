@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class AddActivity: AppCompatActivity() {
+class UpdateActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_add)
+        setContentView(R.layout.activity_update)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.student_add_activity)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -25,7 +25,13 @@ class AddActivity: AppCompatActivity() {
         val editStudentId = findViewById<EditText>(R.id.editStudentId)
         val editPhoneNumber = findViewById<EditText>(R.id.editPhoneNumber)
         val editEmail = findViewById<EditText>(R.id.editEmail)
-        findViewById<Button>(R.id.addStudentButton).setOnClickListener{
+
+        editName.setText(intent.getStringExtra("name"))
+        editStudentId.setText(intent.getStringExtra("studentID"))
+        editPhoneNumber.setText(intent.getStringExtra("phoneNumber"))
+        editEmail.setText(intent.getStringExtra("email"))
+
+        findViewById<Button>(R.id.updateStudentButton).setOnClickListener{
             if(editName.text.toString().isBlank()){
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -51,7 +57,7 @@ class AddActivity: AppCompatActivity() {
                 putExtra("studentID", editStudentId.text.toString())
                 putExtra("phoneNumber", editPhoneNumber.text.toString())
                 putExtra("email", editEmail.text.toString())
-                putExtra("position", -1)
+                putExtra("position", intent.getIntExtra("position", -1))
             }
 
             setResult(RESULT_OK, resultIntent)
@@ -59,6 +65,5 @@ class AddActivity: AppCompatActivity() {
             finish()
 
         }
-
     }
 }

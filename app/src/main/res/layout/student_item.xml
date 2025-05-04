@@ -23,7 +23,7 @@
 
 
             <TextView
-                android:id="@+id/text1"
+                android:id="@+id/displayStudentName"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -32,7 +32,7 @@
                 android:textSize="25sp" />
 
             <TextView
-                android:id="@+id/text2"
+                android:id="@+id/displayStudentId"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -41,18 +41,6 @@
                 android:textSize="25sp" />
 
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/delete"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/baseline_delete_24"
-            android:contentDescription="@string/tap_here_to_delete_content"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

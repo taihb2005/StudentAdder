@@ -2,4 +2,15 @@
     <string name="app_name">StudentAdder</string>
     <string name="tap_here_to_delete_content">Tap here to delete content</string>
     <string name="khoa_idol">Khoa idol</string>
+    <string name="add_student">Add student</string>
+    <string name="search">Search</string>
+    <string name="start">Start</string>
+    <string name="add">Add</string>
+    <string name="student_id">Student ID</string>
+    <string name="full_name">Full name</string>
+    <string name="add_phone_number">Add phone number</string>
+    <string name="add_email">Add email</string>
+    <string name="student_empty_text">Oops, there is nothing here. Consider adding a new student!</string>
+    <string name="update">Update</string>
+    <string name="or">Or</string>
 </resources>
