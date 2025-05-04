@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StudentAdder</string>
+    <string name="tap_here_to_delete_content">Tap here to delete content</string>
+    <string name="khoa_idol">Khoa idol</string>
 </resources>

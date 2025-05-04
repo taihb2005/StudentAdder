@@ -28,8 +28,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
-                android:text="Khoa idol"
-                android:textSize="25dp" />
+                android:text="@string/khoa_idol"
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/text2"
@@ -37,17 +37,17 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
-                android:text="Khoa idol"
-                android:textSize="25dp" />
+                android:text="@string/khoa_idol"
+                android:textSize="25sp" />
 
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/baseline_delete_24"
-            android:contentDescription="Button with image"
+            android:contentDescription="@string/tap_here_to_delete_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
