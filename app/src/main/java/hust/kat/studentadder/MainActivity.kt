@@ -9,20 +9,25 @@ import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.net.toUri
+import hust.kat.studentadder.database.StudentDbHelper
 
 class MainActivity : AppCompatActivity() {
 
-    private val studentList = mutableListOf<StudentModel>()
+    private val viewModel: StudentViewModel by viewModels()
+    private lateinit var dbHelper: StudentDbHelper
+    private lateinit var studentList: MutableList<StudentModel>
     private lateinit var studentAdapter: StudentAdapter
     private lateinit var studentAddLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //KHỞI TẠO ACTIVITY THANH ACTION BAR
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -33,7 +38,17 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        //KHỞI TẠO LỚP DB HELPER
+        dbHelper = StudentDbHelper(this@MainActivity)
+        //THEO DÕI SỰ THAY ĐỔI CỦA DANH SÁCH
+        viewModel.studentList.observe(this){newList ->
+            studentAdapter.submitList(newList)
+        }
 
+        //BẮT ĐẦU CODE CHÍNH
+
+        studentList = dbHelper.loadAllStudent()
+        viewModel.loadFromDb(dbHelper)
 
         val studentView: RecyclerView = findViewById(R.id.studentView)
 
@@ -48,17 +63,26 @@ class MainActivity : AppCompatActivity() {
                 val data = it.data
 
                 val name = data?.getStringExtra("name") ?: "Null"
-                val id = data?.getStringExtra("studentID") ?: "Null"
+                val studentID = data?.getStringExtra("studentID") ?: "Null"
                 val phoneNumber = data?.getStringExtra("phoneNumber")
                 val email = data?.getStringExtra("email")
-                val pos = data?.getIntExtra("position", -1)
+                val position = data?.getIntExtra("position", -1)
 
-                if(pos == -1) {
-                    studentList.add(StudentModel(name, id, phoneNumber, email))
+                val newStudent = StudentModel(name, studentID, phoneNumber, email)
+
+
+                if(position == -1) {
+                    studentList.add(newStudent)
                     studentAdapter.notifyItemInserted(studentList.size - 1)
+                    viewModel.addStudent(newStudent)
+
+                    dbHelper.addStudent(name, studentID, phoneNumber!!, email!!)
                 } else {
-                    studentList[pos!!] = StudentModel(name, id, phoneNumber, email)
-                    studentAdapter.notifyItemChanged(pos)
+                    studentList[position!!] = StudentModel(name, studentID, phoneNumber, email)
+                    viewModel.updateStudent(position, newStudent)
+                    studentAdapter.notifyItemChanged(position)
+
+                    dbHelper.updateStudent(name, studentID, phoneNumber!!, email!!)
                 }
             }
         }
@@ -85,10 +109,10 @@ class MainActivity : AppCompatActivity() {
                 val position = studentAdapter.selectedPosition
                 if(position != -1){
                     val intent = Intent(this, UpdateActivity::class.java).apply {
-                        putExtra("name", studentList.get(position).fullName)
-                        putExtra("studentID", studentList.get(position).studentID)
-                        putExtra("phoneNumber", studentList.get(position).phoneNumber)
-                        putExtra("email", studentList.get(position).email)
+                        putExtra("name", studentList[position].fullName)
+                        putExtra("studentID", studentList[position].studentID)
+                        putExtra("phoneNumber", studentList[position].phoneNumber)
+                        putExtra("email", studentList[position].email)
                         putExtra("position", position)
                     }
 
@@ -99,7 +123,10 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_delete -> {
                 val position = studentAdapter.selectedPosition
                 if (position != -1) {
+                    dbHelper.deleteStudent(studentList[position].studentID)
+
                     studentList.removeAt(position)
+                    viewModel.deleteStudent(position)
                     studentAdapter.notifyItemRemoved(position)
                 }
                 true
@@ -107,7 +134,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_call -> {
                 val position = studentAdapter.selectedPosition
                 val intent = Intent(Intent.ACTION_DIAL).apply {
-                    data = "tel:${studentList.get(position).phoneNumber}".toUri()
+                    data = "tel:${studentList[position].phoneNumber}".toUri()
                 }
                 startActivity(intent)
                 true
@@ -115,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_email -> {
                 val position = studentAdapter.selectedPosition
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = "mailto:${studentList.get(position).email}".toUri()
+                    data = "mailto:${studentList[position].email}".toUri()
                 }
                 startActivity(intent)
                 true

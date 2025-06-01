@@ -10,10 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class StudentAdapter(
-    private val studentList: MutableList<StudentModel>
-) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
-
+    private var studentList: List<StudentModel>
+): RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
     var selectedPosition = -1
+
+    fun submitList(newList: List<StudentModel>) {
+        this.studentList = newList
+    }
 
     inner class StudentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
         val tvName: TextView = itemView.findViewById(R.id.displayStudentName)

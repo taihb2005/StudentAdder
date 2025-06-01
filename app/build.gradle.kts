@@ -26,6 +26,9 @@ android {
             )
         }
     }
+    buildFeatures {
+        dataBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -36,6 +39,9 @@ android {
 }
 
 dependencies {
+    val lifecycle_version = "2.9.0"
+    val fragment_version = "1.8.7"
+    val activity_version = "1.10.1"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -45,4 +51,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+    implementation("androidx.activity:activity-ktx:$activity_version")
 }
