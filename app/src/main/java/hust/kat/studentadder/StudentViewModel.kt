@@ -1,9 +1,13 @@
 package hust.kat.studentadder
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import hust.kat.studentadder.database.StudentDbHelper
+import hust.kat.studentadder.database.StudentDao
+import hust.kat.studentadder.entities.StudentModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class StudentViewModel: ViewModel() {
     private val _studentList = MutableLiveData<List<StudentModel>>()
@@ -13,8 +17,19 @@ class StudentViewModel: ViewModel() {
         _studentList.value = emptyList()
     }
 
-    fun loadFromDb(dbHelper: StudentDbHelper) {
-        _studentList.value = dbHelper.loadAllStudent()
+    suspend fun loadFromDb(dao: StudentDao?) {
+        withContext(Dispatchers.Main) {
+            _studentList.value = dao?.getAllStudents()
+        }
+    }
+
+    fun load(studentList: List<StudentModel>){
+        _studentList.value = studentList
+    }
+
+    fun refresh(){
+        _studentList.value = _studentList.value
+
     }
 
     fun addStudent(student: StudentModel) {

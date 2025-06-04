@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
@@ -16,13 +17,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.net.toUri
-import hust.kat.studentadder.database.StudentDbHelper
+import androidx.lifecycle.lifecycleScope
+import hust.kat.studentadder.database.StudentDao
+import hust.kat.studentadder.database.StudentDatabase
+import hust.kat.studentadder.entities.StudentModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
 
+    private var studentDao: StudentDao? = null
     private val viewModel: StudentViewModel by viewModels()
-    private lateinit var dbHelper: StudentDbHelper
-    private lateinit var studentList: MutableList<StudentModel>
+    private var studentList: MutableList<StudentModel> = mutableListOf()
     private lateinit var studentAdapter: StudentAdapter
     private lateinit var studentAddLauncher: ActivityResultLauncher<Intent>
 
@@ -38,18 +45,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        //KHỞI TẠO LỚP DB HELPER
-        dbHelper = StudentDbHelper(this@MainActivity)
         //THEO DÕI SỰ THAY ĐỔI CỦA DANH SÁCH
         viewModel.studentList.observe(this){newList ->
             studentAdapter.submitList(newList)
         }
 
         //BẮT ĐẦU CODE CHÍNH
-
-        studentList = dbHelper.loadAllStudent()
-        viewModel.loadFromDb(dbHelper)
-
         val studentView: RecyclerView = findViewById(R.id.studentView)
 
         studentAdapter = StudentAdapter(studentList)
@@ -73,19 +74,32 @@ class MainActivity : AppCompatActivity() {
 
                 if(position == -1) {
                     studentList.add(newStudent)
-                    studentAdapter.notifyItemInserted(studentList.size - 1)
-                    viewModel.addStudent(newStudent)
-
-                    dbHelper.addStudent(name, studentID, phoneNumber!!, email!!)
+                    lifecycleScope.launch {
+                        studentDao!!.insertStudent(newStudent)
+                        studentAdapter.notifyItemInserted(studentList.size - 1)
+                        viewModel.addStudent(newStudent)
+                    }
                 } else {
                     studentList[position!!] = StudentModel(name, studentID, phoneNumber, email)
-                    viewModel.updateStudent(position, newStudent)
-                    studentAdapter.notifyItemChanged(position)
+                    //viewModel.updateStudent(position, newStudent)
 
-                    dbHelper.updateStudent(name, studentID, phoneNumber!!, email!!)
+                    lifecycleScope.launch {
+                        studentDao!!.updateStudent(newStudent)
+                        viewModel.updateStudent(position, newStudent)
+                        studentAdapter.notifyItemChanged(position)
+                    }
                 }
             }
         }
+
+        studentDao = StudentDatabase.getInstance(this@MainActivity)?.studentDao()
+        lifecycleScope.launch {
+            studentList = studentDao?.getAllStudents() ?: mutableListOf()
+            viewModel.loadFromDb(studentDao)
+            studentAdapter.notifyDataSetChanged()
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -123,7 +137,11 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_delete -> {
                 val position = studentAdapter.selectedPosition
                 if (position != -1) {
-                    dbHelper.deleteStudent(studentList[position].studentID)
+                    lifecycleScope.launch{
+                        studentDao!!.deleteStudent(studentList[position])
+                        //viewModel.deleteStudent(position)
+                    }
+                    //dbHelper.deleteStudent(studentList[position].studentID)
 
                     studentList.removeAt(position)
                     viewModel.deleteStudent(position)

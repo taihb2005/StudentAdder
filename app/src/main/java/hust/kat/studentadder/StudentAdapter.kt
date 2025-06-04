@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import hust.kat.studentadder.entities.StudentModel
 
 class StudentAdapter(
     private var studentList: List<StudentModel>
